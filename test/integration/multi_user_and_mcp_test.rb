@@ -46,14 +46,74 @@ class MultiUserAndMcpTest < ActionDispatch::IntegrationTest
     assert_select ".workspace-bar__name", text: "User Beta"
   end
 
-  test "mcp endpoint rejects requests with missing or invalid token" do
-    post mcp_path, headers: { "CONTENT_TYPE" => "application/json" }
-    assert_response :unauthorized
-    json = JSON.parse(response.body)
-    assert_includes json["error"], "Missing or invalid token"
+  test "mcp endpoint rejects requests with missing or invalid token in cloud mode" do
+    orig_mode = ENV["DOCNOTATE_MODE"]
+    ENV["DOCNOTATE_MODE"] = "cloud"
 
-    post "#{mcp_path}?token=invalid_token", headers: { "CONTENT_TYPE" => "application/json" }
-    assert_response :unauthorized
+    begin
+      post mcp_path, headers: { "CONTENT_TYPE" => "application/json" }
+      assert_response :unauthorized
+      json = JSON.parse(response.body)
+      assert_includes json["error"], "Missing or invalid token"
+
+      post "#{mcp_path}?token=invalid_token", headers: { "CONTENT_TYPE" => "application/json" }
+      assert_response :unauthorized
+    ensure
+      ENV["DOCNOTATE_MODE"] = orig_mode
+    end
+  end
+
+  test "mcp endpoint allows unauthenticated requests in local mode" do
+    orig_mode = ENV["DOCNOTATE_MODE"]
+    ENV["DOCNOTATE_MODE"] = "local"
+
+    begin
+      body = {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "tools/call",
+        params: {
+          name: "app_status",
+          arguments: {}
+        }
+      }.to_json
+
+      post mcp_path,
+           params: body,
+           headers: {
+             "CONTENT_TYPE" => "application/json",
+             "ACCEPT" => "application/json, text/event-stream"
+           }
+      assert_response :success
+    ensure
+      ENV["DOCNOTATE_MODE"] = orig_mode
+    end
+  end
+
+  test "filesystem browsing is blocked in cloud mode" do
+    orig_mode = ENV["DOCNOTATE_MODE"]
+    ENV["DOCNOTATE_MODE"] = "cloud"
+
+    begin
+      get filesystem_path
+      assert_response :forbidden
+    ensure
+      ENV["DOCNOTATE_MODE"] = orig_mode
+    end
+  end
+
+  test "open in editor is disabled in cloud mode" do
+    orig_mode = ENV["DOCNOTATE_MODE"]
+    ENV["DOCNOTATE_MODE"] = "cloud"
+
+    begin
+      post open_in_editor_document_path(@doc_a), params: { user_token: @user_a.token }
+      assert_response :unprocessable_entity
+      json = JSON.parse(response.body)
+      assert_includes json["error"], "Cloud mode"
+    ensure
+      ENV["DOCNOTATE_MODE"] = orig_mode
+    end
   end
 
   test "mcp endpoint accepts valid token and scopes tools to user" do

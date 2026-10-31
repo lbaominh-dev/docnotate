@@ -9,6 +9,7 @@ services:
       - "3535:80"
     environment:
       RAILS_ENV: production
+      DOCNOTATE_MODE: "${DOCNOTATE_MODE:-cloud}"
       RAILS_FORCE_SSL: "false"
       RAILS_ASSUME_SSL: "false"
       SECRET_KEY_BASE: "${SECRET_KEY_BASE:-changeme_replace_with_openssl_rand_hex_64}"

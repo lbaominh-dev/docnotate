@@ -67,24 +67,35 @@ Once the user answers, proceed to write the plan informed by their response. If 
 
   Adapt the structure to the task — don't force it if something simpler fits.
 
-### 4. Resolve the DocNotate base URL
+### 4. Resolve the DocNotate base URL & Mode
 
-DocNotate's base URL is configurable via the `DOCNOTATE_ROOT_URL` environment variable. Resolve it with a fallback to the default, and strip any trailing slash so users can set either form interchangeably:
+DocNotate's base URL is configurable via `DOCNOTATE_ROOT_URL` (default: `http://localhost:3535`).
+Mode can be set via `DOCNOTATE_MODE` (`local` or `cloud`). If unset, it defaults to `local` (or `cloud` if `DOCNOTATE_USER_TOKEN` is provided or if `DOCNOTATE_ROOT_URL` points to an external remote host).
 
 ```bash
 DOCNOTATE_ROOT_URL="${DOCNOTATE_ROOT_URL:-http://localhost:3535}"
 DOCNOTATE_ROOT_URL="${DOCNOTATE_ROOT_URL%/}"
+DOCNOTATE_MODE="${DOCNOTATE_MODE:-local}"
 ```
-
-If `DOCNOTATE_ROOT_URL` is set but empty, treat it as unset (the `:-` fallback handles this).
 
 ### 5. Open the plan in DocNotate
 
-Once the file is written, open it in the running DocNotate instance via the `open` command (macOS) with the **absolute** path to the file you just created:
+- **Local Mode** (`DOCNOTATE_MODE=local`):
+  Open the file directly with its absolute path:
+  ```bash
+  open "${DOCNOTATE_ROOT_URL}/documents/open?file_path=<absolute_path_to_plan_file>"
+  ```
 
-```bash
-open "${DOCNOTATE_ROOT_URL}/documents/open?file_path=<absolute_path_to_plan_file>"
-```
+- **Cloud Mode** (`DOCNOTATE_MODE=cloud` or remote instance):
+  Since the remote cloud server cannot access your local disk, upload the file content first and open with your workspace token:
+  ```bash
+  curl -s -X POST "${DOCNOTATE_ROOT_URL}/documents" \
+    -F "file_name=$(basename "<absolute_path_to_plan_file>")" \
+    -F "content=<${absolute_path_to_plan_file}" \
+    -F "user_token=${DOCNOTATE_USER_TOKEN}"
+
+  open "${DOCNOTATE_ROOT_URL}/documents/open?file_path=$(basename "<absolute_path_to_plan_file>")&user_token=${DOCNOTATE_USER_TOKEN}"
+  ```
 
 - Use the absolute path (not `~`, not relative) so the URL is unambiguous.
 - If the `open` command isn't available on this platform (e.g. Linux without `xdg-open`, Windows), use the platform equivalent (`xdg-open`, `start`) and tell the user what you ran.

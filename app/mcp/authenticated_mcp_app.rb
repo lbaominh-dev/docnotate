@@ -12,6 +12,10 @@ class AuthenticatedMcpApp
 
     user = User.authenticate_by_token(token)
 
+    if Docnotate.local? && token.blank?
+      user ||= User.first || User.create!(name: "Local Workspace")
+    end
+
     unless user
       body = {
         error: "Unauthorized: Missing or invalid token parameter (?token=<your_workspace_token>). You can find or create your workspace token in the DocNotate Web UI."

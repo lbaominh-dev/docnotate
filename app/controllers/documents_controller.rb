@@ -72,6 +72,11 @@ class DocumentsController < ApplicationController
   end
 
   def open_in_editor
+    if Docnotate.cloud?
+      render json: { error: "Opening files in local editor is not supported in Cloud mode" }, status: :unprocessable_entity
+      return
+    end
+
     @document = user_scoped_documents.find(params[:id])
 
     if params.key?(:editor_name)

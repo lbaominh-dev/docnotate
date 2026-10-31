@@ -7,8 +7,16 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  helper_method :current_user
+  helper_method :current_user, :cloud_mode?, :local_mode?
   before_action :set_current_user
+
+  def cloud_mode?
+    Docnotate.cloud?
+  end
+
+  def local_mode?
+    Docnotate.local?
+  end
 
   private
 
@@ -16,7 +24,12 @@ class ApplicationController < ActionController::Base
     token = params[:user_token].presence || cookies.encrypted[:user_token].presence || session[:user_token].presence
     user = User.authenticate_by_token(token)
 
-    unless user
+    if user
+      if params[:user_token].present? && cookies.encrypted[:user_token] != user.token
+        cookies.encrypted[:user_token] = { value: user.token, expires: 1.year.from_now }
+        session[:user_token] = user.token
+      end
+    else
       user = User.create!(name: "My Workspace")
       cookies.encrypted[:user_token] = { value: user.token, expires: 1.year.from_now }
       session[:user_token] = user.token

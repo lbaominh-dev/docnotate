@@ -40,7 +40,7 @@
     </div>
     <div class="document__actions">
       <%= render "width_toggle" unless @document.html? %>
-      <%= render "editor_open", document: @document, editor_preference: @editor_preference %>
+      <%= render "editor_open", document: @document, editor_preference: @editor_preference if local_mode? %>
       <button class="icon-button document__scroll-top-button" data-scroll-to-top-target="button" data-action="click->scroll-to-top#scrollToTop" type="button" aria-label="Scroll to top">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
       </button>

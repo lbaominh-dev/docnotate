@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class FilesystemController < ApplicationController
+  before_action :ensure_local_mode!
   def show
     @path = params[:path].presence || Dir.home
     @frame_id = params[:frame_id].presence || "filesystem_tree"
@@ -60,5 +61,11 @@ class FilesystemController < ApplicationController
         render json: { error: e.message }, status: :unprocessable_entity
       end
     end
+  end
+
+  private
+
+  def ensure_local_mode!
+    head :forbidden if Docnotate.cloud?
   end
 end

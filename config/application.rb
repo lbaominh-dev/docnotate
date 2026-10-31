@@ -7,6 +7,28 @@ require "rails/all"
 Bundler.require(*Rails.groups)
 
 module Docnotate
+  class << self
+    def mode
+      val = ENV["DOCNOTATE_MODE"].to_s.strip.downcase
+      if val.present?
+        val == "cloud" ? "cloud" : "local"
+      elsif %w[1 true yes].include?(ENV["DOCNOTATE_CLOUD_MODE"].to_s.strip.downcase) ||
+            %w[1 true yes].include?(ENV["DOCNOTATE_CLOUD"].to_s.strip.downcase)
+        "cloud"
+      else
+        "local"
+      end
+    end
+
+    def cloud?
+      mode == "cloud"
+    end
+
+    def local?
+      !cloud?
+    end
+  end
+
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
