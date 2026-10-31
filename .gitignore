@@ -39,6 +39,8 @@ db/*.sqlite3
 
 # Ignore local agent tooling.
 /.opencode/
+/.cursor/
+/.mcp.json
 
 # Ignore local planning notes entirely.
 /plans/

@@ -1,4 +1,5 @@
 ENV["RAILS_ENV"] ||= "test"
+ENV["DOCNOTATE_MODE"] = "local"
 require_relative "../config/environment"
 require "rails/test_help"
 

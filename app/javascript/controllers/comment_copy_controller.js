@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { install, uninstall } from "@github/hotkey"
+import { copyToClipboard } from "utils/clipboard"
 
 export default class extends Controller {
     static targets = ["source", "button", "divider", "defaultIcon", "successIcon"]
@@ -89,7 +90,7 @@ export default class extends Controller {
         }).join("\n\n")
 
         try {
-            await navigator.clipboard.writeText(text)
+            await copyToClipboard(text)
             this.flashCopied()
         } catch (error) {
             console.error("Failed to copy comments:", error)

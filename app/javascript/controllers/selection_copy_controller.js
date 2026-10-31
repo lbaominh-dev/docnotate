@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { copyToClipboard } from "utils/clipboard"
 
 export default class extends Controller {
     static values = { text: String }
@@ -20,7 +21,7 @@ export default class extends Controller {
         if (!text) return
 
         try {
-            await navigator.clipboard.writeText(text)
+            await copyToClipboard(text)
             this.flash()
         } catch (error) {
             console.error("Failed to copy selected text:", error)

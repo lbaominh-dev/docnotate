@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { copyToClipboard } from "utils/clipboard"
 
 export default class extends Controller {
   static targets = ["modal", "tokenInput", "copyStatus"]
@@ -39,7 +40,7 @@ export default class extends Controller {
     }, null, 2)
 
     try {
-      await navigator.clipboard.writeText(config)
+      await copyToClipboard(config)
       this.showCopied("Config JSON Copied!")
     } catch (e) {
       console.error("Clipboard copy failed", e)
@@ -51,7 +52,7 @@ export default class extends Controller {
     const mcpUrl = `${origin}/mcp?token=${this.tokenValue}`
 
     try {
-      await navigator.clipboard.writeText(mcpUrl)
+      await copyToClipboard(mcpUrl)
       this.showCopied("MCP URL Copied!")
     } catch (e) {
       console.error("Clipboard copy failed", e)
