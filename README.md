@@ -5,6 +5,7 @@
 - [Introduction](#introduction)
 - [Demo](#demo)
 - [Features](#features)
+- [Keybindings](#keybindings)
 - [Installation](#installation)
   - [Run locally](#run-locally)
   - [Run with Docker](#run-with-docker)
@@ -44,6 +45,29 @@ That's where DocNotate comes in. It lets you open any markdown file — or an HT
 - Mermaid diagrams rendered as interactive SVG with zoom and pan, an expand button for a wide modal view, and a graceful fallback to the raw source on errors
 - All-files page to browse, rename, delete, and revisit recently opened documents
 - Open a document in your preferred editor directly from the app
+
+## Keybindings
+
+Keyboard shortcuts available across DocNotate:
+
+| Keybinding | Description |
+| --- | --- |
+| ⌘B | Toggle file sidebar |
+| ⌘/ | With text selected: open comment input |
+| ⌘↵ | In comment form: submit new comment |
+| ⌘↵ | In comment popover: save edited comment |
+| ⌘K | In document view: jump to previous comment |
+| ⌘J | In document view: jump to next comment |
+| ⇧⌘Y | In document view: copy comments to clipboard |
+| ⇧⌘" / ⇧⌘' / ⌘" | In document view: view previous comments |
+| ⌥⌘S | In previous comments: toggle resolve all |
+| ⇧⌘X | In markdown view: toggle wide view |
+| ⇧⌘L | In document view: copy file path |
+| ⌘E | In document view: open in editor |
+| ⇧⌘D | In comment popover: delete comment |
+| Esc | Close active sidebar, panel, or modal |
+| Esc | In comment popover: cancel edit or close |
+| Esc | When renaming: cancel document rename |
 
 ## Installation
 

@@ -45,15 +45,15 @@ class SettingsTest < ActionDispatch::IntegrationTest
     assert_select "button[data-theme-value='dark'][aria-pressed='true']"
   end
 
-  test "document show page renders settings with theme options" do
+  test "document show page has no settings button" do
     file = Tempfile.new(["test", ".md"])
     file.write("# Heading\nContent")
     file.close
 
     get open_documents_path(file_path: file.path)
     assert_response :success
-    assert_select ".document__actions .home-settings"
-    assert_select "button[data-theme-value='dark']"
+    assert_select ".document__actions .home-settings", count: 0
+    assert_select ".document__actions .icon-button", minimum: 1
   ensure
     file&.unlink
   end

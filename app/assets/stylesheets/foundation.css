@@ -97,7 +97,7 @@
 
 [data-theme="dark"] {
   --bg: #13161c;
-  --fg: #adb7c6;
+  --fg: #b8c1cf;
   --full-contrast: #eef2f7;
   --title-color: #60a5fa;
   --accent: #5b95ff;
@@ -142,7 +142,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
     --bg: #13161c;
-    --fg: #adb7c6;
+    --fg: #b8c1cf;
     --full-contrast: #eef2f7;
     --title-color: #60a5fa;
     --accent: #5b95ff;
