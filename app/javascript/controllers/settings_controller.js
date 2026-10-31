@@ -1,7 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
+import { getStoredEditorSettings, saveStoredEditorSettings } from "utils/editor_deep_links"
 
 export default class extends Controller {
-  static targets = ["button", "panel", "form", "input", "error"]
+  static targets = ["button", "panel", "form", "input", "error", "editorSelect", "workspaceInput", "notice"]
+
+  static values = {
+    cloud: Boolean
+  }
 
   connect() {
     this.boundClickOutside = this.clickOutside.bind(this)
@@ -24,7 +29,15 @@ export default class extends Controller {
     this.panelTarget.hidden = false
     this.buttonTarget.setAttribute("aria-expanded", "true")
     this.addDocumentListeners()
-    if (this.hasInputTarget) {
+
+    if (this.cloudValue) {
+      this.loadCloudSettings()
+      if (this.hasWorkspaceInputTarget && !this.workspaceInputTarget.value) {
+        this.workspaceInputTarget.focus()
+      } else if (this.hasEditorSelectTarget) {
+        this.editorSelectTarget.focus()
+      }
+    } else if (this.hasInputTarget) {
       this.inputTarget.focus()
     }
   }
@@ -35,6 +48,34 @@ export default class extends Controller {
     this.panelTarget.hidden = true
     this.buttonTarget.setAttribute("aria-expanded", "false")
     this.removeDocumentListeners()
+    if (this.hasNoticeTarget) this.noticeTarget.hidden = true
+  }
+
+  loadCloudSettings() {
+    const settings = getStoredEditorSettings()
+    if (this.hasEditorSelectTarget && settings.scheme) {
+      this.editorSelectTarget.value = settings.scheme
+    }
+    if (this.hasWorkspaceInputTarget) {
+      this.workspaceInputTarget.value = settings.workspacePath || ""
+    }
+  }
+
+  saveCloudEditor(event) {
+    event.preventDefault()
+
+    const scheme = this.hasEditorSelectTarget ? this.editorSelectTarget.value : "vscode"
+    const workspacePath = this.hasWorkspaceInputTarget ? this.workspaceInputTarget.value.trim() : ""
+
+    saveStoredEditorSettings({ scheme, workspacePath })
+
+    if (this.hasNoticeTarget) {
+      this.noticeTarget.hidden = false
+    }
+
+    setTimeout(() => {
+      this.close()
+    }, 600)
   }
 
   async save(event) {
@@ -72,8 +113,10 @@ export default class extends Controller {
   }
 
   showError(message) {
-    this.errorTarget.textContent = message
-    this.errorTarget.hidden = false
+    if (this.hasErrorTarget) {
+      this.errorTarget.textContent = message
+      this.errorTarget.hidden = false
+    }
   }
 
   clickOutside(event) {

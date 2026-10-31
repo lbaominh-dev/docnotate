@@ -312,6 +312,42 @@ class DocumentsTest < ActionDispatch::IntegrationTest
     file.unlink
   end
 
+  test "renders editor open button in local mode" do
+    file = Tempfile.new([ "local-editor-test", ".md" ])
+    file.write("# Heading\nLocal test")
+    file.close
+
+    get open_documents_path, params: { file_path: file.path }
+    assert_response :success
+    assert_select ".document__editor[data-editor-open-cloud-value='false']"
+    assert_select "button[data-editor-open-target='button']"
+    assert_select "input[name='editor_name']"
+  ensure
+    file&.unlink
+  end
+
+  test "renders editor open button and deep link config in cloud mode" do
+    orig_mode = ENV["DOCNOTATE_MODE"]
+    ENV["DOCNOTATE_MODE"] = "cloud"
+
+    begin
+      file = Tempfile.new([ "cloud-editor-test", ".md" ])
+      file.write("# Heading\nCloud test")
+      file.close
+
+      get open_documents_path, params: { file_path: file.path }
+      assert_response :success
+      assert_select ".document__editor[data-editor-open-cloud-value='true']"
+      assert_select "button[data-editor-open-target='button']"
+      assert_select "select[data-editor-open-target='editorSelect']"
+      assert_select "input[data-editor-open-target='workspaceInput']"
+      assert_select "code[data-editor-open-target='previewUrl']"
+    ensure
+      ENV["DOCNOTATE_MODE"] = orig_mode
+      file&.unlink
+    end
+  end
+
   private
 
   def create_document(file_path, last_opened_at: Time.current)

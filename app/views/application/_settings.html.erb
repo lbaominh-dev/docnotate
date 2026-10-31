@@ -1,6 +1,6 @@
 <% editor_pref = local_assigns[:editor_preference] || @editor_preference %>
 <% extra_class = local_assigns[:extra_class] %>
-<div class="home-settings <%= extra_class %>" data-controller="settings">
+<div class="home-settings <%= extra_class %>" data-controller="settings" data-settings-cloud-value="<%= cloud_mode? %>">
   <button class="home-settings__button"
           data-settings-target="button"
           data-action="click->settings#toggle"
@@ -51,15 +51,43 @@
 
     <hr class="home-settings__divider">
 
-    <%= form_with url: settings_editor_path, method: :post, class: "home-settings__form", data: { settings_target: "form", action: "submit->settings#save" } do |form| %>
-      <%= form.label :editor_name, "Open in editor app", class: "home-settings__label" %>
-      <%= form.text_field :editor_name, value: (editor_pref if editor_pref.present? && editor_pref != EditorOpener::DEFAULT), placeholder: "e.g. Visual Studio Code", class: "home-settings__input input", autocomplete: "off", data: { settings_target: "input" } %>
-      <p class="home-settings__hint">App used when opening a file in your local editor. Choose "Use default app" to use your system default.</p>
-      <p class="home-settings__error" data-settings-target="error" hidden></p>
-      <div class="home-settings__actions">
-        <button type="submit" name="editor_name" value="" class="button button--secondary">Use default app</button>
-        <button type="submit" class="button">Save</button>
+    <% if cloud_mode? %>
+      <div class="home-settings__section">
+        <label class="home-settings__label">Local Editor (Deep Link)</label>
+        <form class="home-settings__form" data-settings-target="cloudForm" data-action="submit->settings#saveCloudEditor">
+          <label for="settings_cloud_scheme" class="home-settings__label" style="font-size: 0.8125rem;">Editor</label>
+          <select id="settings_cloud_scheme" class="home-settings__input input" data-settings-target="editorSelect">
+            <option value="vscode">Visual Studio Code (vscode://)</option>
+            <option value="cursor">Cursor (cursor://)</option>
+            <option value="windsurf">Windsurf (windsurf://)</option>
+            <option value="idea">JetBrains (idea://)</option>
+            <option value="sublime">Sublime Text (subl://)</option>
+            <option value="custom">Custom URL Scheme...</option>
+          </select>
+
+          <label for="settings_cloud_workspace" class="home-settings__label" style="font-size: 0.8125rem; margin-top: 6px;">Local Project Root</label>
+          <input id="settings_cloud_workspace" type="text" class="home-settings__input input" placeholder="e.g. /Users/name/projects/my-repo" data-settings-target="workspaceInput" autocomplete="off">
+          <p class="home-settings__hint">Root directory of this project on your local computer.</p>
+
+          <p class="home-settings__error" data-settings-target="error" hidden></p>
+          <p class="home-settings__hint" data-settings-target="notice" hidden style="color: var(--accent); font-weight: 500;">Saved in browser.</p>
+
+          <div class="home-settings__actions">
+            <button type="submit" class="button">Save</button>
+          </div>
+        </form>
       </div>
+    <% else %>
+      <%= form_with url: settings_editor_path, method: :post, class: "home-settings__form", data: { settings_target: "form", action: "submit->settings#save" } do |form| %>
+        <%= form.label :editor_name, "Open in editor app", class: "home-settings__label" %>
+        <%= form.text_field :editor_name, value: (editor_pref if editor_pref.present? && editor_pref != EditorOpener::DEFAULT), placeholder: "e.g. Visual Studio Code", class: "home-settings__input input", autocomplete: "off", data: { settings_target: "input" } %>
+        <p class="home-settings__hint">App used when opening a file in your local editor. Choose "Use default app" to use your system default.</p>
+        <p class="home-settings__error" data-settings-target="error" hidden></p>
+        <div class="home-settings__actions">
+          <button type="submit" name="editor_name" value="" class="button button--secondary">Use default app</button>
+          <button type="submit" class="button">Save</button>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </div>

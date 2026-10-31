@@ -66,4 +66,68 @@ class CommentTest < ActiveSupport::TestCase
     assert_not_includes html, "<script>"
     assert_not_includes html, "<img"
   end
+
+  test "create_comment! successfully anchors multi-line selected_text in wrapped paragraph" do
+    content = <<~MARKDOWN
+      This is a paragraph with a very long sentence
+      that wraps to the next line in the source markdown
+      and finishes here.
+    MARKDOWN
+
+    document = Document.open("sample_wrap.md", content: content)
+    selected_text = "This is a paragraph with a very long sentence\nthat wraps to the next line"
+
+    comment = document.create_comment!(
+      content: "Review line wrap",
+      selected_text: selected_text
+    )
+
+    assert comment.persisted?
+    assert comment.start_block_id.present?
+    assert_equal comment.start_block_id, comment.end_block_id
+    assert_equal 0, comment.start_offset
+    assert_equal 72, comment.end_offset
+  end
+
+  test "create_comment! successfully anchors multi-block selected_text across heading and paragraph" do
+    content = <<~MARKDOWN
+      ## Important Goal
+      Verify that DocNotate Cloud deployment works seamlessly with remote MCP server.
+    MARKDOWN
+
+    document = Document.open("sample_multiblock.md", content: content)
+    selected_text = "## Important Goal\nVerify that DocNotate Cloud deployment"
+
+    comment = document.create_comment!(
+      content: "Check heading and paragraph",
+      selected_text: selected_text
+    )
+
+    assert comment.persisted?
+    assert comment.start_block_id.present?
+    assert comment.end_block_id.present?
+    assert_not_equal comment.start_block_id, comment.end_block_id
+    assert_equal 0, comment.start_offset
+  end
+
+  test "create_comment! successfully anchors multi-block selected_text across list items with bullets" do
+    content = <<~MARKDOWN
+      - First item in the list
+      - Second item in the list
+      - Third item in the list
+    MARKDOWN
+
+    document = Document.open("sample_list.md", content: content)
+    selected_text = "- First item in the list\n- Second item in the list"
+
+    comment = document.create_comment!(
+      content: "Check list items",
+      selected_text: selected_text
+    )
+
+    assert comment.persisted?
+    assert comment.start_block_id.present?
+    assert comment.end_block_id.present?
+    assert_not_equal comment.start_block_id, comment.end_block_id
+  end
 end

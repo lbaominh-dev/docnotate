@@ -228,6 +228,49 @@ class MarkdownDocumentsSystemTest < ApplicationSystemTestCase
     code_file.unlink
   end
 
+  test "multi-block comment selection across paragraphs and list" do
+    page.current_window.resize_to(1440, 1000)
+    visit open_documents_path(file_path: @file.path)
+
+    page.execute_script(<<~JS)
+      const p = document.querySelector(".document__content > p")
+      const li = document.querySelector(".document__content li")
+
+      const pWalker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT)
+      const pText = pWalker.nextNode()
+
+      const liWalker = document.createTreeWalker(li, NodeFilter.SHOW_TEXT)
+      const liText = liWalker.nextNode()
+
+      const range = document.createRange()
+      range.setStart(pText, 10)
+      range.setEnd(liText, 15)
+
+      window.getSelection().removeAllRanges()
+      window.getSelection().addRange(range)
+      p.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }))
+    JS
+
+
+    assert_selector ".document__selection-toolbar"
+    click_button "Add Note"
+    assert_selector ".document__comment-card"
+    fill_in "comment_create_text", with: "Cross-block comment note"
+    within ".document__comment-card" do
+      click_button "Comment"
+    end
+
+    assert_selector ".document__comment-highlight", minimum: 2
+
+    refresh
+
+    assert_selector ".document__comment-highlight", minimum: 2
+    first(".document__comment-highlight").click
+    assert_selector ".document__comment-popover", text: "Cross-block comment note"
+  end
+
+
+
   private
 
   def assert_no_horizontal_page_overflow

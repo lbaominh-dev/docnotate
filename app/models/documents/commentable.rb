@@ -136,25 +136,130 @@ module Documents
       anchor
     end
 
-    # Search the content outline for a block whose text contains the selection.
-    # The outline is the same text the agent sees, so what anchors here is what
-    # the agent read from open_document.
+    # Search the document's content outline and leaf blocks for the selection.
+    # Supports matching within a single block or across multiple consecutive blocks,
+    # normalizing line breaks, whitespace, and markdown prefixes (bullets/numbers).
     def locate_selected_text(selected_text)
-      block_texts = {}
-      collect_outline_texts = lambda do |entries|
-        entries.each do |entry|
-          block_texts[entry[:block_id]] = entry[:text] if entry[:text].present?
-          collect_outline_texts.call(entry[:children].to_a)
+      target = selected_text.to_s.strip
+      return nil if target.blank?
+
+      blocks = commentable_leaf_blocks_with_text
+      return nil if blocks.empty?
+
+      # Build composite text across blocks with mapping to block_id and dom_offset
+      doc_human_text = +""
+      doc_to_block = []
+
+      blocks.each_with_index do |b, block_idx|
+        if block_idx > 0
+          2.times do
+            doc_to_block << nil
+            doc_human_text << "\n"
+          end
+        end
+
+        b[:human_text].each_char.with_index do |ch, h_idx|
+          doc_to_block << { block_index: block_idx, block_id: b[:block_id], dom_offset: b[:human_to_dom][h_idx] }
+          doc_human_text << ch
         end
       end
-      collect_outline_texts.call(content_outline)
+      doc_to_block << nil
 
-      block_id, block_text = block_texts.find { |_id, text| text.include?(selected_text) }
-      return nil unless block_id
+      match_range = find_selected_text_range(doc_human_text, target)
+      return nil unless match_range
 
-      start_offset = block_text.index(selected_text)
-      { start_block_id: block_id, end_block_id: block_id, start_offset:, end_offset: start_offset + selected_text.length }
+      start_char, end_char = match_range
+      start_char += 1 while start_char < doc_to_block.length && doc_to_block[start_char].nil?
+      end_char -= 1 while end_char >= 0 && doc_to_block[end_char].nil?
+
+      return nil if start_char > end_char || doc_to_block[start_char].nil? || doc_to_block[end_char].nil?
+
+      start_info = doc_to_block[start_char]
+      end_info = doc_to_block[end_char]
+      end_block = blocks[end_info[:block_index]]
+
+      {
+        start_block_id: start_info[:block_id],
+        end_block_id: end_info[:block_id],
+        start_offset: start_info[:dom_offset],
+        end_offset: [ end_info[:dom_offset] + 1, end_block[:dom_text].length ].min
+      }
     end
+
+    def find_selected_text_range(doc_text, target)
+      # 1. Exact match
+      if (idx = doc_text.index(target))
+        return [ idx, idx + target.length - 1 ]
+      end
+
+      # 2. Normalized whitespace match
+      words = target.split(/\s+/)
+      if words.any?
+        pattern = Regexp.new(words.map { |w| Regexp.escape(w) }.join('\s+'), Regexp::MULTILINE)
+        if (m = doc_text.match(pattern))
+          return [ m.begin(0), m.end(0) - 1 ]
+        end
+      end
+
+      # 3. Match without markdown prefixes (#, list numbers, bullets)
+      cleaned_lines = target.lines.map { |l| l.sub(/^\s*(#+\s+|\d+\.\s+|[-*+]\s+)/, "") }
+      cleaned_words = cleaned_lines.join.split(/\s+/)
+      if cleaned_words.any? && cleaned_words != words
+        pattern = Regexp.new(cleaned_words.map { |w| Regexp.escape(w) }.join('\s+'), Regexp::MULTILINE)
+        if (m = doc_text.match(pattern))
+          return [ m.begin(0), m.end(0) - 1 ]
+        end
+      end
+
+      nil
+    end
+
+    def commentable_leaf_blocks_with_text
+      leaf_nodes = []
+      walk = lambda do |node|
+        has_child_blocks = node.children.any? { |c| c.node_id.present? }
+        if node.node_id.present? && !has_child_blocks
+          leaf_nodes << node
+        else
+          node.children.each { |c| walk.call(c) }
+        end
+      end
+
+      root_node_tree.each { |r| walk.call(r) }
+      leaf_nodes.map { |n| extract_block_text_with_mapping(n) }
+    end
+
+    def extract_block_text_with_mapping(node)
+      dom_text = +""
+      human_text = +""
+      human_to_dom = []
+
+      walk_text = lambda do |n|
+        if n.node_type == "softbreak" || n.node_type == "linebreak"
+          human_to_dom << dom_text.length
+          human_text << (n.node_type == "linebreak" ? "\n" : " ")
+        elsif n.children.empty? && n.content.present?
+          n.content.to_s.each_char do |ch|
+            human_to_dom << dom_text.length
+            dom_text << ch
+            human_text << ch
+          end
+        elsif n.node_type == "text" || n.node_type == "code"
+          n.content.to_s.each_char do |ch|
+            human_to_dom << dom_text.length
+            dom_text << ch
+            human_text << ch
+          end
+        else
+          n.children.each { |child| walk_text.call(child) unless child.node_id.present? }
+        end
+      end
+
+      walk_text.call(node)
+      human_to_dom << dom_text.length
+      { block_id: node.node_id, dom_text: dom_text, human_text: human_text, human_to_dom: human_to_dom }
+    end
+
 
     def current_version_comments
       return Comment.none if current_version_id.blank?

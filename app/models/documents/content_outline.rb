@@ -22,7 +22,7 @@ module Documents
       nodes.flat_map do |node|
         entry = block_outline(node)
         if entry
-          [entry]
+          [ entry ]
         elsif node.node_id.blank?
           # Wrapper nodes (the markdown "document" root) own no block id:
           # drop the wrapper, lift its block children into this level.
@@ -45,9 +45,16 @@ module Documents
     end
 
     def collect_text(node)
-      own = node.content.to_s
-      child_text = node.children.filter_map { |child| collect_text(child) unless child.node_id }.join
-      own + child_text
+      case node.node_type
+      when "softbreak"
+        " "
+      when "linebreak"
+        "\n"
+      else
+        own = node.content.to_s
+        child_text = node.children.filter_map { |child| collect_text(child) unless child.node_id }.join
+        own + child_text
+      end
     end
   end
 end

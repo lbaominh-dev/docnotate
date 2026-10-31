@@ -171,8 +171,10 @@ function blocksBetween(blocks, startBlock, endBlock) {
     const endIndex = blocks.indexOf(endBlock)
     if (startIndex === -1 || endIndex === -1) return []
 
-    return blocks.slice(startIndex, endIndex + 1)
+    const rawSpan = blocks.slice(startIndex, endIndex + 1)
+    return rawSpan.filter(block => !rawSpan.some(other => block !== other && block.contains(other)))
 }
+
 
 function textLength(root) {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false)

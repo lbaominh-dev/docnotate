@@ -103,8 +103,10 @@ export default class extends Controller {
 
 	if (startIndex === -1 || endIndex === -1) return []
 
-	return allBlocks.slice(startIndex, endIndex + 1)
+	const rawSpan = allBlocks.slice(startIndex, endIndex + 1)
+	return rawSpan.filter(block => !rawSpan.some(other => block !== other && block.contains(other)))
     }
+
 
     blockTextLength(blockEl) {
 	const walker = document.createTreeWalker(blockEl, NodeFilter.SHOW_TEXT, null, false)

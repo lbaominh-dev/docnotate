@@ -1,7 +1,9 @@
 <div class="document__editor"
      data-controller="editor-open"
      data-editor-open-url="<%= open_in_editor_document_path(document) %>"
-     data-editor-open-configured="<%= editor_preference.present? %>">
+     data-editor-open-configured="<%= editor_preference.present? %>"
+     data-editor-open-cloud-value="<%= cloud_mode? %>"
+     data-editor-open-file-path-value="<%= document.file_path %>">
   <button class="icon-button icon-button--tooltip-end"
           data-editor-open-target="button"
           data-action="click->editor-open#open"
@@ -16,18 +18,60 @@
   </button>
 
   <div class="document__editor-panel" data-editor-open-target="panel" hidden>
-    <div class="document__editor-panel-header">
-      <span class="document__editor-panel-heading">Open in editor</span>
-    </div>
-    <%= form_with url: open_in_editor_document_path(document), method: :post, class: "document__editor-form", data: { editor_open_target: "form", action: "submit->editor-open#choose" } do |form| %>
-      <%= form.label :editor_name, "Application name", class: "document__editor-label" %>
-      <%= form.text_field :editor_name, placeholder: "e.g. Visual Studio Code", class: "document__editor-input", autocomplete: "off", data: { editor_open_target: "input" } %>
-      <p class="document__editor-hint">Use the app name shown in your Applications folder. This choice will be remembered.</p>
-      <p class="document__editor-error" data-editor-open-target="error" hidden></p>
-      <div class="document__editor-actions">
-        <button type="submit" name="editor_name" value="" class="button button--secondary">Use default app</button>
-        <button type="submit" class="button">Open</button>
+    <% if cloud_mode? %>
+      <div class="document__editor-panel-header">
+        <span class="document__editor-panel-heading">Open in local editor</span>
       </div>
+      <form class="document__editor-form" data-editor-open-target="cloudForm" data-action="submit->editor-open#saveAndOpenCloud">
+        <div>
+          <label for="editor_open_scheme" class="document__editor-label">Editor</label>
+          <select id="editor_open_scheme" class="document__editor-select input" data-editor-open-target="editorSelect" data-action="change->editor-open#updatePreview">
+            <option value="vscode">Visual Studio Code (vscode://)</option>
+            <option value="cursor">Cursor (cursor://)</option>
+            <option value="windsurf">Windsurf (windsurf://)</option>
+            <option value="idea">JetBrains (idea://)</option>
+            <option value="sublime">Sublime Text (subl://)</option>
+            <option value="custom">Custom URL Scheme...</option>
+          </select>
+        </div>
+
+        <div data-editor-open-target="customTemplateWrapper" hidden>
+          <label for="editor_open_custom" class="document__editor-label">Custom Scheme Template</label>
+          <input id="editor_open_custom" type="text" class="document__editor-input input" placeholder="e.g. myeditor://file{file}" data-editor-open-target="customTemplateInput" data-action="input->editor-open#updatePreview">
+          <p class="document__editor-hint">Use {file} or {path} as placeholder.</p>
+        </div>
+
+        <div>
+          <label for="editor_open_workspace" class="document__editor-label">Local Project Root</label>
+          <input id="editor_open_workspace" type="text" class="document__editor-input input" placeholder="e.g. /Users/name/projects/my-repo" data-editor-open-target="workspaceInput" data-action="input->editor-open#updatePreview" autocomplete="off">
+          <p class="document__editor-hint">Path to this repo on your computer. Joined with: <%= document.file_path %></p>
+        </div>
+
+        <div class="document__editor-preview" data-editor-open-target="previewContainer">
+          <span class="document__editor-hint">Link preview:</span>
+          <code class="document__editor-code" data-editor-open-target="previewUrl"></code>
+        </div>
+
+        <p class="document__editor-error" data-editor-open-target="error" hidden></p>
+        <div class="document__editor-actions">
+          <button type="button" class="button button--secondary" data-action="click->editor-open#close">Cancel</button>
+          <button type="submit" class="button">Open</button>
+        </div>
+      </form>
+    <% else %>
+      <div class="document__editor-panel-header">
+        <span class="document__editor-panel-heading">Open in editor</span>
+      </div>
+      <%= form_with url: open_in_editor_document_path(document), method: :post, class: "document__editor-form", data: { editor_open_target: "form", action: "submit->editor-open#choose" } do |form| %>
+        <%= form.label :editor_name, "Application name", class: "document__editor-label" %>
+        <%= form.text_field :editor_name, placeholder: "e.g. Visual Studio Code", class: "document__editor-input input", autocomplete: "off", data: { editor_open_target: "input" } %>
+        <p class="document__editor-hint">Use the app name shown in your Applications folder. This choice will be remembered.</p>
+        <p class="document__editor-error" data-editor-open-target="error" hidden></p>
+        <div class="document__editor-actions">
+          <button type="submit" name="editor_name" value="" class="button button--secondary">Use default app</button>
+          <button type="submit" class="button">Open</button>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </div>
