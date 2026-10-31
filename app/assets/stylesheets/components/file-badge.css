@@ -27,5 +27,5 @@
 
 .file-badge--other {
   color: var(--muted);
-  background: rgba(25, 29, 38, 0.05);
+  background: var(--surface-hover);
 }

@@ -9,7 +9,7 @@
   justify-content: center;
   gap: 8px;
   background: var(--pre-bg);
-  border: 1px solid rgba(25, 29, 38, 0.14);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 10px 20px;
   font-family: var(--mono-font);
@@ -22,7 +22,7 @@
 }
 
 .button:hover {
-  background: rgba(9, 78, 206, 0.05);
+  background: var(--inline-code-bg);
   border-color: var(--pre-border);
 }
 
@@ -45,7 +45,7 @@
 /* Keycap label for the button's keyboard shortcut */
 .button__hotkey-hint {
   padding: 1px 4px;
-  border: 1px solid rgba(25, 29, 38, 0.14);
+  border: 1px solid var(--border-subtle);
   border-radius: 3px;
   font-family: var(--mono-font);
   font-size: 0.625rem;
@@ -59,11 +59,12 @@
 .button--secondary {
   background: var(--bg);
   color: var(--fg);
+  border-color: var(--border-subtle);
 }
 
 .button--secondary:hover {
-  background: rgba(25, 29, 38, 0.045);
-  border-color: rgba(25, 29, 38, 0.14);
+  background: var(--surface-hover);
+  border-color: var(--border-subtle);
 }
 
 .button--secondary svg,

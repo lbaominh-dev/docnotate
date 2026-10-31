@@ -20,6 +20,7 @@
 @import url("components/file-tree.css");
 @import url("components/file-sidebar.css");
 @import url("components/workspace.css");
+@import url("components/settings.css");
 
 /* Pages */
 @import url("pages/error.css");

@@ -67,24 +67,24 @@
 }
 
 .document__selection-highlight {
-  background: #5fd47e;
+  background: var(--highlight-bg);
   border-radius: 2px;
-  color: inherit;
+  color: var(--highlight-fg);
   padding: 0;
 }
 
 .document__comment-highlight {
-  background: #5fd47e;
-  border-bottom: 2px solid #2e8b4a;
+  background: var(--highlight-bg);
+  border-bottom: 2px solid var(--highlight-border);
   border-radius: 2px;
-  color: inherit;
+  color: var(--highlight-fg);
   padding: 0;
   cursor: pointer;
   transition: background-color 0.15s ease;
 }
 
 .document__comment-highlight:hover {
-  background: #4dbb6a;
+  background: var(--highlight-hover);
 }
 
 /* The comment currently shown in the popover is identified by its heavier,
@@ -98,7 +98,7 @@
 .document-node--code-block code .document__selection-highlight,
 .document-node--code .document__comment-highlight,
 .document-node--code-block code .document__comment-highlight {
-  color: var(--full-contrast);
+  color: var(--highlight-fg);
 }
 
 .document__comment-card {
@@ -370,8 +370,8 @@
   top: 50%;
   transform: translateY(-50%);
   padding: 4px 8px;
-  background: var(--full-contrast);
-  color: #ffffff;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: 6px;
@@ -443,8 +443,8 @@
   top: 50%;
   transform: translateY(-50%);
   padding: 4px 8px;
-  background: var(--full-contrast);
-  color: #ffffff;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: 6px;
@@ -612,8 +612,8 @@
   top: 50%;
   transform: translateY(-50%);
   padding: 4px 8px;
-  background: var(--full-contrast);
-  color: #ffffff;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: 6px;
@@ -671,8 +671,8 @@
   top: 50%;
   transform: translateY(-50%);
   padding: 4px 8px;
-  background: var(--full-contrast);
-  color: #ffffff;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: 6px;
@@ -1035,8 +1035,8 @@
   left: 0;
   bottom: calc(100% + 6px);
   padding: 6px 10px;
-  background: var(--full-contrast);
-  color: #ffffff;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: 6px;
@@ -1157,8 +1157,8 @@
   left: 0;
   top: calc(100% + 6px);
   padding: 6px 10px;
-  background: var(--full-contrast);
-  color: #ffffff;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: 6px;
@@ -1489,7 +1489,7 @@
 }
 
 .mermaid-modal::backdrop {
-  background: rgba(25, 29, 38, 0.5);
+  background: var(--backdrop-bg);
 }
 
 .mermaid-modal__header {
@@ -1911,8 +1911,8 @@
   top: 50%;
   transform: translateY(-50%);
   padding: 4px 8px;
-  background: var(--full-contrast);
-  color: #ffffff;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: 6px;

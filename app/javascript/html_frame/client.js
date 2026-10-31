@@ -23,7 +23,21 @@ style.textContent = [
   // SVG "marks" are rects painted under the text, so fill plays the background role
   "rect.document__selection-highlight { fill: #5fd47e; }",
   "rect.document__comment-highlight { fill: #5fd47e; cursor: pointer; }",
-  "rect.document__comment-highlight:hover { fill: #4dbb6a; }"
+  "rect.document__comment-highlight:hover { fill: #4dbb6a; }",
+  "@media (prefers-color-scheme: dark) {",
+  "  mark.document__selection-highlight { background: rgba(46, 139, 74, 0.45); }",
+  "  mark.document__comment-highlight { background: rgba(46, 139, 74, 0.45); border-bottom-color: #34d399; }",
+  "  mark.document__comment-highlight:hover { background: rgba(46, 139, 74, 0.65); }",
+  "  rect.document__selection-highlight { fill: rgba(46, 139, 74, 0.45); }",
+  "  rect.document__comment-highlight { fill: rgba(46, 139, 74, 0.45); }",
+  "  rect.document__comment-highlight:hover { fill: rgba(46, 139, 74, 0.65); }",
+  "}",
+  "[data-theme='dark'] mark.document__selection-highlight { background: rgba(46, 139, 74, 0.45); }",
+  "[data-theme='dark'] mark.document__comment-highlight { background: rgba(46, 139, 74, 0.45); border-bottom-color: #34d399; }",
+  "[data-theme='dark'] mark.document__comment-highlight:hover { background: rgba(46, 139, 74, 0.65); }",
+  "[data-theme='dark'] rect.document__selection-highlight { fill: rgba(46, 139, 74, 0.45); }",
+  "[data-theme='dark'] rect.document__comment-highlight { fill: rgba(46, 139, 74, 0.45); }",
+  "[data-theme='dark'] rect.document__comment-highlight:hover { fill: rgba(46, 139, 74, 0.65); }"
 ].join("\n")
 document.head.append(style)
 

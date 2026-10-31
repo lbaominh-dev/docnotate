@@ -1,6 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html data-theme-preference="<%= theme_preference %>">
   <head>
+    <script>
+      (function() {
+        try {
+          const preference = localStorage.getItem("docnotate-theme") || "<%= theme_preference %>" || "system";
+          const isDark = preference === "dark" || (preference === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme-preference", preference);
+        } catch (_) {}
+      })();
+    </script>
     <title><%= content_for(:title) || "Docnotate" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,7 +33,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="<%= yield(:body_class) %>">
+  <body class="<%= yield(:body_class) %>" data-controller="theme">
     <%= yield %>
   </body>
 </html>

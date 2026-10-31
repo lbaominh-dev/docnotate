@@ -7,8 +7,12 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  helper_method :current_user, :cloud_mode?, :local_mode?
+  helper_method :current_user, :cloud_mode?, :local_mode?, :theme_preference
   before_action :set_current_user
+
+  def theme_preference
+    cookies[:theme].presence_in(AppSetting::THEMES) || AppSetting.theme
+  end
 
   def cloud_mode?
     Docnotate.cloud?

@@ -18,4 +18,19 @@ class AppSettingTest < ActiveSupport::TestCase
     assert_equal "Cursor", AppSetting.get("editor_application")
     assert_equal 1, AppSetting.count
   end
+
+  test "theme defaults to system when not configured" do
+    assert_equal "system", AppSetting.theme
+  end
+
+  test "theme sets and retrieves valid theme preference" do
+    AppSetting.theme = "dark"
+    assert_equal "dark", AppSetting.theme
+
+    AppSetting.theme = "light"
+    assert_equal "light", AppSetting.theme
+
+    AppSetting.theme = "invalid_theme"
+    assert_equal "system", AppSetting.theme
+  end
 end

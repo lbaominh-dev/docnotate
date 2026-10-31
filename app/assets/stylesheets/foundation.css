@@ -47,7 +47,8 @@
   font-display: swap;
 }
 
-:root {
+:root,
+[data-theme="light"] {
   --bg: #f7f6f2;
   --fg: #4b5362;
   --full-contrast: #191d26;
@@ -60,6 +61,13 @@
   --muted: #6e7686;
   --border: hsl(220, 13%, 80%);
   --border-light: hsl(220, 13%, 90%);
+  --border-subtle: rgba(25, 29, 38, 0.14);
+  --surface-hover: rgba(25, 29, 38, 0.045);
+  --surface-subtle: rgba(25, 29, 38, 0.02);
+  --backdrop-bg: rgba(25, 29, 38, 0.5);
+  --sidebar-backdrop: rgba(25, 29, 38, 0.25);
+  --tooltip-bg: #191d26;
+  --tooltip-fg: #ffffff;
   --link: hsl(220, 92%, 42%);
   --link-underline: rgba(9, 78, 206, 0.2);
   --inline-code-bg: rgba(9, 78, 206, 0.09);
@@ -76,9 +84,105 @@
   --table-border: rgba(9, 78, 206, 0.15);
   --table-header-bg: #d9e1f2;
   --table-alternate-bg: rgba(9, 78, 206, 0.035);
+  --highlight-bg: #5fd47e;
+  --highlight-border: #2e8b4a;
+  --highlight-hover: #4dbb6a;
+  --highlight-fg: #191d26;
+  --selection-bg: rgba(9, 78, 206, 0.14);
   --font: "iA Writer Quattro S", -apple-system, "Segoe UI", Roboto, sans-serif;
   --title-font: "IBM Plex Serif", Georgia, "Times New Roman", serif;
   --mono-font: "Lilex", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #13161c;
+  --fg: #adb7c6;
+  --full-contrast: #eef2f7;
+  --title-color: #60a5fa;
+  --accent: #5b95ff;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --red: #f87171;
+  --purple: #c084fc;
+  --muted: #7c889b;
+  --border: hsl(220, 14%, 28%);
+  --border-light: hsl(220, 14%, 20%);
+  --border-subtle: rgba(255, 255, 255, 0.14);
+  --surface-hover: rgba(255, 255, 255, 0.06);
+  --surface-subtle: rgba(255, 255, 255, 0.03);
+  --backdrop-bg: rgba(0, 0, 0, 0.7);
+  --sidebar-backdrop: rgba(0, 0, 0, 0.55);
+  --tooltip-bg: #2d3340;
+  --tooltip-fg: #f3f4f6;
+  --link: #60a5fa;
+  --link-underline: rgba(96, 165, 250, 0.3);
+  --inline-code-bg: rgba(91, 149, 255, 0.15);
+  --inline-code-fg: #f3f4f6;
+  --pre-bg: #1c202a;
+  --pre-border: rgba(91, 149, 255, 0.28);
+  --pre-shadow: rgba(0, 0, 0, 0.45);
+  --note-bg: #172232;
+  --note-border: #243a59;
+  --warn-bg: rgba(251, 191, 36, 0.1);
+  --warn-border: rgba(251, 191, 36, 0.25);
+  --ok-bg: rgba(52, 211, 153, 0.1);
+  --ok-border: rgba(52, 211, 153, 0.25);
+  --table-border: rgba(91, 149, 255, 0.2);
+  --table-header-bg: #222936;
+  --table-alternate-bg: rgba(255, 255, 255, 0.02);
+  --highlight-bg: rgba(46, 139, 74, 0.45);
+  --highlight-border: #34d399;
+  --highlight-hover: rgba(46, 139, 74, 0.65);
+  --highlight-fg: #eef2f7;
+  --selection-bg: rgba(91, 149, 255, 0.25);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --bg: #13161c;
+    --fg: #adb7c6;
+    --full-contrast: #eef2f7;
+    --title-color: #60a5fa;
+    --accent: #5b95ff;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --purple: #c084fc;
+    --muted: #7c889b;
+    --border: hsl(220, 14%, 28%);
+    --border-light: hsl(220, 14%, 20%);
+    --border-subtle: rgba(255, 255, 255, 0.14);
+    --surface-hover: rgba(255, 255, 255, 0.06);
+    --surface-subtle: rgba(255, 255, 255, 0.03);
+    --backdrop-bg: rgba(0, 0, 0, 0.7);
+    --sidebar-backdrop: rgba(0, 0, 0, 0.55);
+    --tooltip-bg: #2d3340;
+    --tooltip-fg: #f3f4f6;
+    --link: #60a5fa;
+    --link-underline: rgba(96, 165, 250, 0.3);
+    --inline-code-bg: rgba(91, 149, 255, 0.15);
+    --inline-code-fg: #f3f4f6;
+    --pre-bg: #1c202a;
+    --pre-border: rgba(91, 149, 255, 0.28);
+    --pre-shadow: rgba(0, 0, 0, 0.45);
+    --note-bg: #172232;
+    --note-border: #243a59;
+    --warn-bg: rgba(251, 191, 36, 0.1);
+    --warn-border: rgba(251, 191, 36, 0.25);
+    --ok-bg: rgba(52, 211, 153, 0.1);
+    --ok-border: rgba(52, 211, 153, 0.25);
+    --table-border: rgba(91, 149, 255, 0.2);
+    --table-header-bg: #222936;
+    --table-alternate-bg: rgba(255, 255, 255, 0.02);
+    --highlight-bg: rgba(46, 139, 74, 0.45);
+    --highlight-border: #34d399;
+    --highlight-hover: rgba(46, 139, 74, 0.65);
+    --highlight-fg: #eef2f7;
+    --selection-bg: rgba(91, 149, 255, 0.25);
+    color-scheme: dark;
+  }
 }
 
 * {
@@ -124,5 +228,5 @@ strong {
 }
 
 ::selection {
-  background: rgba(9, 78, 206, 0.14);
+  background: var(--selection-bg);
 }

@@ -82,7 +82,7 @@
 .file-sidebar__backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(25, 29, 38, 0.25);
+  background: var(--sidebar-backdrop);
   backdrop-filter: blur(2px);
   z-index: 55;
   transition: opacity 0.2s ease;

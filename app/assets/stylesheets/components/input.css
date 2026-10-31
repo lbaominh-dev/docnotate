@@ -12,7 +12,7 @@
   line-height: 1.4;
   color: var(--full-contrast);
   background: var(--pre-bg);
-  border: 1px solid rgba(25, 29, 38, 0.14);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
 }
 

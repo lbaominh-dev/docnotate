@@ -50,7 +50,7 @@
 }
 
 .documents__row {
-  border-bottom: 1px solid rgba(25, 29, 38, 0.045);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .documents__row:last-child {
@@ -155,8 +155,8 @@
   left: 0;
   bottom: calc(100% + 6px);
   padding: 6px 10px;
-  background: var(--full-contrast);
-  color: #ffffff;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: 6px;

@@ -24,7 +24,9 @@ export default class extends Controller {
     this.panelTarget.hidden = false
     this.buttonTarget.setAttribute("aria-expanded", "true")
     this.addDocumentListeners()
-    this.inputTarget.focus()
+    if (this.hasInputTarget) {
+      this.inputTarget.focus()
+    }
   }
 
   close() {

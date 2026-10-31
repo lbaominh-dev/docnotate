@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   root "home#index"
 
   post "settings/editor", to: "settings#update_editor", as: :settings_editor
+  post "settings/theme", to: "settings#update_theme", as: :settings_theme
   resource :workspace, only: [:update, :create]
 
   # MCP endpoint for coding agents (token authenticated)
