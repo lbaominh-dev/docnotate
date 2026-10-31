@@ -37,7 +37,8 @@ class ResolveCommentTool < MCP::Tool
 
   class << self
     def call(document_id:, comment_id:, resolved: true, server_context:)
-      document = Document.find(document_id)
+      scope = Current.user ? Current.user.documents : Document
+      document = scope.find(document_id)
       comment = document.set_comment_resolved!(comment_id, resolved: resolved)
 
       state = comment.is_resolved ? "resolved" : "reopened"

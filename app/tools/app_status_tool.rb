@@ -33,11 +33,13 @@ class AppStatusTool < MCP::Tool
 
   class << self
     def call(include_details: false, server_context:)
+      doc_count = Current.user ? Current.user.documents.count : Document.count
       payload = {
         app: "DocNotate",
         status: "ok",
-        documents_count: Document.count,
+        documents_count: doc_count,
       }
+      payload[:workspace] = Current.user.name if Current.user
 
       if include_details
         payload[:env] = Rails.env

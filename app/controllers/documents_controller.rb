@@ -4,7 +4,34 @@ class DocumentsController < ApplicationController
   def index
     @query = params[:query].presence
     @file_type = params[:file_type].presence_in(%w[markdown html])
-    @pagy, @documents = pagy(Document.matching_title(@query).with_file_type(@file_type).order(last_opened_at: :desc))
+    @pagy, @documents = pagy(user_scoped_documents.matching_title(@query).with_file_type(@file_type).order(last_opened_at: :desc))
+  end
+
+  def create
+    file_path = params[:file_path].presence || params[:file_name].presence
+    content = params[:content].presence || (params[:file].respond_to?(:read) ? params[:file].read : nil)
+
+    if file_path.blank? || content.blank?
+      redirect_to root_path, alert: "Please provide a file with content"
+      return
+    end
+
+    unless Document.supported_file?(file_path)
+      @file_path = file_path
+      render :unsupported_file, status: :unsupported_media_type
+      return
+    end
+
+    @document = Document.open(file_path, content: content, user: current_user)
+
+    unless @document.persisted?
+      redirect_to root_path, alert: "Failed to save file"
+      return
+    end
+
+    redirect_to open_documents_path(file_path: @document.file_path)
+  rescue ArgumentError, Errno::ENOENT, Errno::EACCES
+    redirect_to root_path, alert: "Unable to process file"
   end
 
   def open
@@ -26,7 +53,7 @@ class DocumentsController < ApplicationController
       return
     end
 
-    @document = Document.open(file_path)
+    @document = Document.open(file_path, user: current_user)
 
     unless @document.persisted?
       redirect_to root_path, alert: "Failed to open file"
@@ -40,12 +67,12 @@ class DocumentsController < ApplicationController
   end
 
   def show
-    @document = Document.find(params[:id])
+    @document = user_scoped_documents.find(params[:id])
     redirect_to open_documents_path(file_path: @document.file_path)
   end
 
   def open_in_editor
-    @document = Document.find(params[:id])
+    @document = user_scoped_documents.find(params[:id])
 
     if params.key?(:editor_name)
       editor_name = params[:editor_name].presence
@@ -82,7 +109,7 @@ class DocumentsController < ApplicationController
 
   def destroy
     @document.destroy!
-    @documents_count = Document.count
+    @documents_count = user_scoped_documents.count
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to documents_path, notice: "Removed from history" }
@@ -96,8 +123,12 @@ class DocumentsController < ApplicationController
 
   private
 
+  def user_scoped_documents
+    current_user ? Document.where(user_id: [nil, current_user.id]) : Document.all
+  end
+
   def set_document
-    @document = Document.find(params[:id])
+    @document = user_scoped_documents.find(params[:id])
   end
 
   def document_params
@@ -110,7 +141,7 @@ class DocumentsController < ApplicationController
 
   def prepare_document
     @document.touch_last_opened!
-    @recent_documents = Document.recently_opened.limit(5)
+    @recent_documents = user_scoped_documents.recently_opened.limit(5)
     @editor_preference = AppSetting.get("editor_application")
     @root_nodes = @document.root_node_tree
     @comment_payload = @document.comment_payload

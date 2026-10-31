@@ -24,7 +24,8 @@ class GetDocumentContentTool < MCP::Tool
 
   class << self
     def call(document_id:, server_context:)
-      document = Document.find(document_id)
+      scope = Current.user ? Current.user.documents : Document
+      document = scope.find(document_id)
 
       payload = {
         id: document.id,

@@ -33,7 +33,8 @@ class UpdateCommentTool < MCP::Tool
 
   class << self
     def call(document_id:, comment_id:, content:, server_context:)
-      document = Document.find(document_id)
+      scope = Current.user ? Current.user.documents : Document
+      document = scope.find(document_id)
       comment = document.update_comment!(comment_id, content)
 
       MCP::Tool::Response.new(

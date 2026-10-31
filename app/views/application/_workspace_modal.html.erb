@@ -1,0 +1,65 @@
+<dialog class="workspace-modal" data-workspace-modal-target="modal">
+  <div class="workspace-modal__header">
+    <h3 class="workspace-modal__title">Workspace & MCP Settings</h3>
+    <button type="button" class="icon-button" data-action="click->workspace-modal#close" aria-label="Close">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+
+  <div class="workspace-modal__body">
+    <div>
+      <span class="workspace-modal__label">Personal MCP URL:</span>
+      <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+        <input type="text" readonly value="<%= request.base_url %>/mcp?token=<%= current_user.token %>" class="workspace-modal__input">
+        <button type="button" class="button" data-action="click->workspace-modal#copyMcpUrl">
+          Copy URL
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <span class="workspace-modal__label" style="margin-bottom: 0;">Agent MCP Config (Cursor, Claude, Windsurf):</span>
+        <button type="button" class="button" data-action="click->workspace-modal#copyMcpConfig">
+          Copy JSON Config
+        </button>
+      </div>
+      <pre class="workspace-modal__code">{
+  "mcpServers": {
+    "docnotate": {
+      "url": "<%= request.base_url %>/mcp?token=<%= current_user.token %>"
+    }
+  }
+}</pre>
+      <span data-workspace-modal-target="copyStatus" style="color: #2da44e; font-weight: 500; font-size: 0.8125rem; display: none;"></span>
+    </div>
+
+    <hr style="border: none; border-top: 1px solid rgba(25, 29, 38, 0.1); margin: 8px 0;">
+
+    <div>
+      <%= form_with url: workspace_path, method: :patch, class: "home__form" do |f| %>
+        <span class="workspace-modal__label">Rename Workspace:</span>
+        <div style="display: flex; gap: 8px;">
+          <%= f.text_field "user[name]", value: current_user.name, class: "workspace-modal__input", style: "font-family: inherit;" %>
+          <%= f.submit "Save", class: "button" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div>
+      <%= form_with url: workspace_path, method: :patch, class: "home__form" do |f| %>
+        <span class="workspace-modal__label">Switch to another Workspace Token:</span>
+        <div style="display: flex; gap: 8px;">
+          <%= f.text_field :switch_token, placeholder: "docn_...", class: "workspace-modal__input" %>
+          <%= f.submit "Switch", class: "button button--secondary" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div>
+      <%= form_with url: workspace_path, method: :post do |f| %>
+        <%= f.submit "+ Create New Workspace", class: "button button--secondary", style: "width: 100%;" %>
+      <% end %>
+    </div>
+  </div>
+</dialog>

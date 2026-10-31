@@ -45,7 +45,7 @@ class CommentsController < ApplicationController
   private
 
   def set_document
-    @document = Document.find(params[:document_id])
+    @document = current_user.documents.find_by(id: params[:document_id]) || Document.find(params[:document_id])
   end
 
   def comment_params

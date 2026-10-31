@@ -30,7 +30,8 @@ class RenameDocumentTool < MCP::Tool
 
   class << self
     def call(document_id:, name:, server_context:)
-      document = Document.find(document_id)
+      scope = Current.user ? Current.user.documents : Document
+      document = scope.find(document_id)
       document.update!(name: name)
 
       MCP::Tool::Response.new(

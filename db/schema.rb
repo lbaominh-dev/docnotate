@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_10_085649) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_31_101400) do
   create_table "app_settings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "key"
@@ -75,8 +75,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_085649) do
     t.datetime "last_opened_at"
     t.string "name"
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["current_version_id"], name: "index_documents_on_current_version_id"
-    t.index ["file_path"], name: "index_documents_on_file_path", unique: true
+    t.index ["file_path"], name: "index_documents_on_file_path"
+    t.index ["user_id", "file_path"], name: "index_documents_on_user_id_and_file_path", unique: true
+    t.index ["user_id"], name: "index_documents_on_user_id"
   end
 
   create_table "html_contents", force: :cascade do |t|
@@ -85,10 +88,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_085649) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", default: "Workspace", null: false
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.index ["token"], name: "index_users_on_token", unique: true
+  end
+
   add_foreign_key "comments", "document_versions"
   add_foreign_key "comments", "documents"
   add_foreign_key "document_nodes", "document_nodes", column: "parent_id"
   add_foreign_key "document_nodes", "document_versions"
   add_foreign_key "document_versions", "documents"
   add_foreign_key "documents", "document_versions", column: "current_version_id"
+  add_foreign_key "documents", "users"
 end

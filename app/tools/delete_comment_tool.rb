@@ -31,7 +31,8 @@ class DeleteCommentTool < MCP::Tool
 
   class << self
     def call(document_id:, comment_id:, server_context:)
-      document = Document.find(document_id)
+      scope = Current.user ? Current.user.documents : Document
+      document = scope.find(document_id)
       comment = document.destroy_comment!(comment_id)
 
       MCP::Tool::Response.new(

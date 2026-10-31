@@ -31,7 +31,8 @@ class GetDocumentCommentsTool < MCP::Tool
 
   class << self
     def call(document_id:, status: "unresolved", server_context:)
-      document = Document.find(document_id)
+      scope = Current.user ? Current.user.documents : Document
+      document = scope.find(document_id)
       status = "all" unless %w[unresolved resolved all].include?(status)
       comments = document.comments_payload(status: status)
 

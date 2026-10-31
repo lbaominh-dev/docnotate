@@ -29,7 +29,8 @@ class ListDocumentsTool < MCP::Tool
 
   class << self
     def call(query: nil, file_type: nil, server_context:)
-      documents = Document.matching_title(query.to_s).with_file_type(file_type).order(:file_path)
+      scope = Current.user ? Current.user.documents : Document
+      documents = scope.matching_title(query.to_s).with_file_type(file_type).order(:file_path)
 
       payload = {
         count: documents.count,

@@ -1,38 +1,85 @@
-<div class="home" data-controller="file-sidebar">
+<div class="home"
+     data-controller="file-sidebar workspace-modal"
+     data-workspace-modal-token-value="<%= current_user.token %>">
+
+  <div class="workspace-bar">
+    <div class="workspace-bar__info">
+      <span class="workspace-bar__label">Workspace:</span>
+      <span class="workspace-bar__name"><%= current_user.name %></span>
+    </div>
+    <div class="workspace-bar__actions">
+      <button type="button" class="button button--secondary" data-action="click->workspace-modal#open" style="font-size: 0.8125rem; padding: 4px 10px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        MCP & Workspace
+      </button>
+    </div>
+  </div>
+
   <%= render "application/brand" %>
 
   <section class="home__action">
-    <%= form_with url: open_documents_path, method: :get, class: "home__form" do |form| %>
-      <div class="home__input-group">
-        <button type="button"
-                class="icon-button home__file-tree-button"
-                data-file-sidebar-target="toggle"
-                data-action="click->file-sidebar#toggle"
-                data-controller="hotkey"
-                data-hotkey="Mod+b"
-                aria-label="Browse files"
-                aria-controls="home_sidebar"
-                aria-expanded="false"
-                data-tooltip="Browse files (⌘B)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2.5a1 1 0 0 1-.8-.4l-.9-1.2A1 1 0 0 0 15 3h-2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M20 21a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-2.9a1 1 0 0 1-.88-.53l-.42-.85a1 1 0 0 0-.9-.62H13a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M3 5v14a2 2 0 0 0 2 2h3"/><path d="M3 10h5"/></svg>
-        </button>
-        <%= form.text_field :file_path,
-                            placeholder: "Enter local file path",
-                            class: "home__input",
-                            autocomplete: "off",
-                            data: { controller: "autofocus" } %>
-        <%= form.button type: :submit, class: "button home__button" do %>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
-          <span>Open</span>
-        <% end %>
+    <!-- Client-side File Dropzone & Picker -->
+    <div class="file-dropzone"
+         data-controller="file-upload"
+         data-file-upload-target="dropzone"
+         data-action="click->file-upload#trigger dragover->file-upload#dragOver dragleave->file-upload#dragLeave drop->file-upload#drop">
+
+      <input type="file"
+             data-file-upload-target="input"
+             data-action="change->file-upload#handleFile"
+             accept=".md,.markdown,.mdx,.html,.htm"
+             style="display: none;">
+
+      <div class="file-dropzone__content">
+        <div class="file-dropzone__icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <p class="file-dropzone__title">Choose a local Markdown / HTML file</p>
+        <p class="file-dropzone__subtitle">or drag and drop it here to read and annotate</p>
       </div>
-    <% end %>
-    <p class="home__hint">Supports .md, .markdown, .mdx, .html, .htm</p>
+
+      <div class="file-dropzone__status" data-file-upload-target="status" style="display: none;"></div>
+
+      <%= form_with url: documents_path, method: :post, data: { file_upload_target: "form" }, style: "display: none;" do |form| %>
+        <%= form.hidden_field :file_name, data: { file_upload_target: "fileName" } %>
+        <%= form.hidden_field :content, data: { file_upload_target: "content" } %>
+      <% end %>
+    </div>
+
+    <!-- Or enter path / browse from server -->
+    <div style="margin-top: 16px;">
+      <p class="home__hint" style="margin-bottom: 8px;">Or enter path manually:</p>
+      <%= form_with url: open_documents_path, method: :get, class: "home__form" do |form| %>
+        <div class="home__input-group">
+          <button type="button"
+                  class="icon-button home__file-tree-button"
+                  data-file-sidebar-target="toggle"
+                  data-action="click->file-sidebar#toggle"
+                  data-controller="hotkey"
+                  data-hotkey="Mod+b"
+                  aria-label="Browse files"
+                  aria-controls="home_sidebar"
+                  aria-expanded="false"
+                  data-tooltip="Browse files (⌘B)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2.5a1 1 0 0 1-.8-.4l-.9-1.2A1 1 0 0 0 15 3h-2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M20 21a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-2.9a1 1 0 0 1-.88-.53l-.42-.85a1 1 0 0 0-.9-.62H13a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M3 5v14a2 2 0 0 0 2 2h3"/><path d="M3 10h5"/></svg>
+          </button>
+          <%= form.text_field :file_path,
+                              placeholder: "Enter local file path",
+                              class: "home__input",
+                              autocomplete: "off",
+                              data: { controller: "autofocus" } %>
+          <%= form.button type: :submit, class: "button home__button" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+            <span>Open</span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </section>
 
   <section class="home__recent">
     <div class="home__recent-header">
-      <h2 class="section-title">Recent files</h2>
+      <h2 class="section-title">Recent files in this workspace</h2>
       <%= link_to documents_path, class: "home__all-files", aria: { label: "View all files" }, data: { tooltip: "View all files" } do %>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
       <% end %>
@@ -53,11 +100,12 @@
       </ul>
     <% else %>
       <div class="card card--transparent empty-state">
-        <p>No recent files yet. Open a file to get started.</p>
+        <p>No recent files yet in this workspace. Choose or drop a file above to get started.</p>
       </div>
     <% end %>
   </section>
 
+  <%= render "application/workspace_modal" %>
   <%= render "settings" %>
 
   <%= render "filesystem/sidebar",

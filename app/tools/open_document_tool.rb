@@ -3,13 +3,17 @@
 class OpenDocumentTool < MCP::Tool
   tool_name "open_document"
   title "Open Document"
-  description "Opens a markdown or html file by path. DocNotate reads it from disk, upserts its record, and snapshots a new version if the file changed since last time — the same write path the app's UI uses. Returns the document's metadata and a block-level content outline; block ids double as comment anchors for comment tools."
+  description "Opens a markdown or html file by path (or syncs content directly). DocNotate reads it from disk or from database/content payload, upserts its record, and snapshots a new version if the file changed since last time — the same write path the app's UI uses. Returns the document's metadata and a block-level content outline; block ids double as comment anchors for comment tools."
 
   input_schema(
     properties: {
       file_path: {
         type: "string",
         description: "Path of the file to open (absolute, or as shown by list_documents).",
+      },
+      content: {
+        type: "string",
+        description: "Optional raw content to sync directly into DocNotate (useful when agent is remote or working with client-side files).",
       },
     },
     required: %w[file_path],
@@ -23,8 +27,8 @@ class OpenDocumentTool < MCP::Tool
   )
 
   class << self
-    def call(file_path:, server_context:)
-      document = Document.open(file_path)
+    def call(file_path:, content: nil, server_context:)
+      document = Document.open(file_path, content: content, user: Current.user)
 
       payload = {
         id: document.id,

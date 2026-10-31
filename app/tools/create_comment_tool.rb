@@ -53,7 +53,8 @@ class CreateCommentTool < MCP::Tool
     def call(document_id:, content:, selected_text: nil, start_block_id: nil,
              end_block_id: nil, start_offset: nil, end_offset: nil,
              prefix_text: nil, postfix_text: nil, server_context:)
-      document = Document.find(document_id)
+      scope = Current.user ? Current.user.documents : Document
+      document = scope.find(document_id)
       comment = document.create_comment!(
         content: content,
         selected_text: selected_text,

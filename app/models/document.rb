@@ -5,7 +5,9 @@ class Document < ApplicationRecord
           Documents::TableOfContents, Documents::Assets,
           Documents::Filterable
 
-  validates :file_path, presence: true
+  belongs_to :user, optional: true
+
+  validates :file_path, presence: true, uniqueness: { scope: :user_id }
   validates :file_type, presence: true
   validates :content, presence: true
 

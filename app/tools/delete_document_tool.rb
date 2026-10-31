@@ -28,7 +28,8 @@ class DeleteDocumentTool < MCP::Tool
 
   class << self
     def call(document_id:, server_context:)
-      document = Document.find(document_id)
+      scope = Current.user ? Current.user.documents : Document
+      document = scope.find(document_id)
       file_path = document.file_path
       document.destroy!
 
