@@ -28,6 +28,12 @@ export default class extends Controller {
     }
   }
 
+  backdropClick(event) {
+    if (event.target === this.modalTarget) {
+      this.close()
+    }
+  }
+
   async copyMcpConfig() {
     const origin = window.location.origin
     const mcpUrl = `${origin}/mcp?token=${this.tokenValue}`
