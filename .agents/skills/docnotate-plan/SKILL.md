@@ -80,7 +80,15 @@ If `DOCNOTATE_ROOT_URL` is set but empty, treat it as unset (the `:-` fallback h
 
 ### 5. Open the plan in DocNotate
 
-Once the file is written, open it in the running DocNotate instance via the `open` command (macOS) with the **absolute** path to the file you just created:
+If DocNotate's MCP tools are available in the current agent session, call the `open_in_browser` tool with the absolute file path:
+
+```json
+open_in_browser(file_path: "<absolute_path_to_plan_file>")
+```
+
+This registers or syncs the file, launches your desktop browser directly to the document, and returns the canonical URL.
+
+If DocNotate MCP tools are not available (e.g. older server or standalone session), fall back to opening the URL via the system `open` command (macOS) with the **absolute** path to the file you just created:
 
 ```bash
 open "${DOCNOTATE_ROOT_URL}/documents/open?file_path=<absolute_path_to_plan_file>"

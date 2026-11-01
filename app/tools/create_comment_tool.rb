@@ -4,7 +4,7 @@ class CreateCommentTool < MCP::Tool
   tool_name "create_comment"
   title "Create Comment"
   description "Anchors a new inline comment on the document's current version. " +
-    "Two ways to anchor: pass selected_text (text you took from open_document's outline — the span is located for you), " +
+    "Two ways to anchor: pass selected_text (text you took from read_document's outline — the span is located for you), " +
     "or pass the block span yourself (start_block_id/end_block_id, optionally the offsets). Passing both is fine; " +
     "an explicit span wins. prefix_text/postfix_text give the anchor's surrounding text, like a quote's context. " +
     "Returns the created comment with its id — use that id later with resolve_comment/update_comment/delete_comment " +
@@ -14,7 +14,7 @@ class CreateCommentTool < MCP::Tool
     properties: {
       document_id: {
         type: "integer",
-        description: "Document id as returned by list_documents or open_document.",
+        description: "Document id as returned by list_documents or read_document.",
       },
       content: {
         type: "string",
@@ -26,7 +26,7 @@ class CreateCommentTool < MCP::Tool
       },
       start_block_id: {
         type: "string",
-        description: "block_id of the first block in the span (from open_document's outline).",
+        description: "block_id of the first block in the span (from read_document's outline).",
       },
       end_block_id: {
         type: "string",

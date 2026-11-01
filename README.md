@@ -123,7 +123,8 @@ Set this up in the MCP config of your agent harness with the Dev server running 
 | --- | --- |
 | `app_status` | App connectivity check |
 | `list_documents` | List documents in the library |
-| `open_document` | Open (or re-sync) a file by path and get its id |
+| `read_document` | Read (or re-sync) a file by path and get its metadata + outline |
+| `open_in_browser` | Open a document in the desktop browser by path or id |
 | `get_document_content` | Read a document's full current text |
 | `get_document_comments` | Read inline comments, optionally filtered by status |
 | `create_comment` | Add an inline comment, optionally anchored by `selected_text` |

@@ -138,7 +138,7 @@ module Documents
 
     # Search the content outline for a block whose text contains the selection.
     # The outline is the same text the agent sees, so what anchors here is what
-    # the agent read from open_document.
+    # the agent read from read_document.
     def locate_selected_text(selected_text)
       block_texts = {}
       collect_outline_texts = lambda do |entries|
