@@ -181,6 +181,27 @@ class DocumentsTest < ActionDispatch::IntegrationTest
     assert_select "turbo-frame#document_sidebar_tree[data-src*='filesystem']"
   end
 
+  test "does not render the file browser in cloud mode" do
+    orig_mode = ENV["DOCNOTATE_MODE"]
+    ENV["DOCNOTATE_MODE"] = "cloud"
+
+    file = Tempfile.new([ "cloud-sidebar", ".md" ])
+    file.write("# Heading\nCloud sidebar test")
+    file.close
+
+    begin
+      get open_documents_path, params: { file_path: file.path }
+    ensure
+      ENV["DOCNOTATE_MODE"] = orig_mode
+      file.unlink
+    end
+
+    assert_response :success
+    assert_select ".document__sidebar-button", count: 0
+    assert_select "aside.document__sidebar", count: 0
+    assert_select ".document[data-controller~='file-sidebar']", count: 0
+  end
+
   test "renders markdown tables" do
     file = Tempfile.new([ "table", ".md" ])
     file.write("| Name | Status |\n| --- | --- |\n| Alice | Active |")

@@ -1,6 +1,6 @@
 <% content_for :body_class, "html-document-page" if @document.html? %>
 <div class="<%= class_names("document", "document--wide": @document.html?, "document--markdown": !@document.html?) %>"
-     data-controller="<%= class_names("scroll-to-top file-sidebar", "document-width": !@document.html?) %>">
+     data-controller="<%= class_names("scroll-to-top", "file-sidebar": local_mode?, "document-width": !@document.html?) %>">
   <header class="document__header">
     <div class="document__leading">
       <%= link_to root_path, class: "document__home-button" do %>
@@ -49,18 +49,20 @@
 
   <%= render "table_of_contents", entries: @document.table_of_contents(@root_nodes), html: @document.html? %>
 
-  <button class="document__sidebar-button"
-          data-file-sidebar-target="toggle"
-          data-action="click->file-sidebar#toggle"
-          data-controller="hotkey"
-          data-hotkey="Mod+b"
-          data-tooltip="Browse files (⌘B)"
-          type="button"
-          aria-label="Browse files"
-          aria-controls="document_sidebar"
-          aria-expanded="false">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2.5a1 1 0 0 1-.8-.4l-.9-1.2A1 1 0 0 0 15 3h-2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M20 21a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-2.9a1 1 0 0 1-.88-.53l-.42-.85a1 1 0 0 0-.9-.62H13a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M3 5v14a2 2 0 0 0 2 2h3"/><path d="M3 10h5"/></svg>
-  </button>
+  <% if local_mode? %>
+    <button class="document__sidebar-button"
+            data-file-sidebar-target="toggle"
+            data-action="click->file-sidebar#toggle"
+            data-controller="hotkey"
+            data-hotkey="Mod+b"
+            data-tooltip="Browse files (⌘B)"
+            type="button"
+            aria-label="Browse files"
+            aria-controls="document_sidebar"
+            aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2.5a1 1 0 0 1-.8-.4l-.9-1.2A1 1 0 0 0 15 3h-2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M20 21a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-2.9a1 1 0 0 1-.88-.53l-.42-.85a1 1 0 0 0-.9-.62H13a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M3 5v14a2 2 0 0 0 2 2h3"/><path d="M3 10h5"/></svg>
+    </button>
+  <% end %>
 
   <% if @document.html? %>
     <%= render "documents/html_paper" %>
@@ -68,10 +70,12 @@
     <%= render "documents/markdown_paper" %>
   <% end %>
 
-  <%= render "filesystem/sidebar",
-             id: "document_sidebar",
-             frame_id: "document_sidebar_tree",
-             path: File.dirname(@document.file_path),
-             active_file_path: @document.file_path,
-             extra_class: "document__sidebar" %>
+  <% if local_mode? %>
+    <%= render "filesystem/sidebar",
+               id: "document_sidebar",
+               frame_id: "document_sidebar_tree",
+               path: File.dirname(@document.file_path),
+               active_file_path: @document.file_path,
+               extra_class: "document__sidebar" %>
+  <% end %>
 </div>
