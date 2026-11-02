@@ -1,0 +1,25 @@
+<div>
+  <span class="workspace-modal__label">Saved workspaces in this browser:</span>
+  <ul class="workspace-list" data-workspace-modal-target="savedList"></ul>
+  <p class="workspace-modal__hint">Only workspace tokens and names are stored locally.</p>
+
+  <%= form_with url: workspace_path, method: :patch, data: { workspace_modal_target: "switchForm" } do |f| %>
+    <%= hidden_field_tag :switch_token, "", id: "workspace_switch_token", data: { workspace_modal_target: "switchTokenInput" } %>
+  <% end %>
+</div>
+
+<div>
+  <%= form_with url: workspace_path, method: :patch, class: "home__form" do |f| %>
+    <span class="workspace-modal__label">Add workspace by token:</span>
+    <div style="display: flex; gap: 8px;">
+      <%= f.text_field :switch_token, placeholder: "docn_...", class: "workspace-modal__input" %>
+      <%= f.submit "Add & Switch", class: "button button--secondary" %>
+    </div>
+  <% end %>
+</div>
+
+<div>
+  <%= form_with url: workspace_path, method: :post do |f| %>
+    <%= f.submit "+ Create New Workspace", class: "button button--secondary", style: "width: 100%;" %>
+  <% end %>
+</div>

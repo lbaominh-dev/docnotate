@@ -7,7 +7,8 @@ class WorkspacesController < ApplicationController
       if target_user
         cookies.encrypted[:user_token] = { value: target_user.token, expires: 1.year.from_now }
         session[:user_token] = target_user.token
-        redirect_back_or_to root_path, notice: "Switched to workspace: #{target_user.name}"
+        # Redirect to a clean URL so a ?user_token=... referer cannot switch us back.
+        redirect_to root_path, notice: "Switched to workspace: #{target_user.name}"
       else
         redirect_back_or_to root_path, alert: "Workspace token not found"
       end
@@ -23,6 +24,6 @@ class WorkspacesController < ApplicationController
     new_user = User.create!(name: params[:name].presence || "New Workspace")
     cookies.encrypted[:user_token] = { value: new_user.token, expires: 1.year.from_now }
     session[:user_token] = new_user.token
-    redirect_back_or_to root_path, notice: "Created and switched to new workspace"
+    redirect_to root_path, notice: "Created and switched to new workspace"
   end
 end

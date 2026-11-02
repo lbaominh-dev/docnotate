@@ -1,0 +1,19 @@
+<div class="workspace-switcher">
+  <button type="button"
+          class="button button--secondary workspace-switcher__toggle"
+          data-workspace-modal-target="dropdownButton"
+          data-action="click->workspace-modal#toggleDropdown"
+          aria-haspopup="true"
+          aria-expanded="false">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+    <span>Workspaces</span>
+    <span class="workspace-switcher__count" data-workspace-modal-target="dropdownCount">1</span>
+  </button>
+
+  <div class="workspace-switcher__menu" data-workspace-modal-target="dropdownMenu" hidden>
+    <div class="workspace-switcher__list" data-workspace-modal-target="dropdownList"></div>
+    <button type="button" class="workspace-switcher__manage" data-action="click->workspace-modal#open">
+      Manage workspaces…
+    </button>
+  </div>
+</div>

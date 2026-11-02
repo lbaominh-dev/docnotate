@@ -8,6 +8,18 @@ class HomeTest < ActionDispatch::IntegrationTest
     assert_select ".home-settings__button"
   end
 
+  test "renders the workspace switcher with the current workspace data" do
+    user = User.create!(name: "Alpha Workspace")
+
+    get root_path(user_token: user.token)
+
+    assert_response :success
+    assert_select ".workspace-switcher__toggle"
+    assert_select ".home[data-workspace-modal-token-value='#{user.token}']"
+    assert_select ".home[data-workspace-modal-name-value='Alpha Workspace']"
+    assert_select "ul.workspace-list[data-workspace-modal-target='savedList']"
+  end
+
   test "renders the file browser button beside the file input without loading file tree initially" do
     original_scan = Filesystem::DirectoryScanner.method(:scan)
     scanned = false

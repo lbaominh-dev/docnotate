@@ -1,0 +1,26 @@
+<div>
+  <span class="workspace-modal__label">Personal MCP URL:</span>
+  <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+    <input type="text" readonly value="<%= request.base_url %>/mcp?token=<%= current_user.token %>" class="workspace-modal__input">
+    <button type="button" class="button" data-action="click->workspace-modal#copyMcpUrl">
+      Copy URL
+    </button>
+  </div>
+</div>
+
+<div>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+    <span class="workspace-modal__label" style="margin-bottom: 0;">Agent MCP Config (Cursor, Claude, Windsurf):</span>
+    <button type="button" class="button" data-action="click->workspace-modal#copyMcpConfig">
+      Copy JSON Config
+    </button>
+  </div>
+  <pre class="workspace-modal__code">{
+  "mcpServers": {
+    "docnotate": {
+      "url": "<%= request.base_url %>/mcp?token=<%= current_user.token %>"
+    }
+  }
+}</pre>
+  <span data-workspace-modal-target="copyStatus" style="color: #2da44e; font-weight: 500; font-size: 0.8125rem; display: none;"></span>
+</div>
