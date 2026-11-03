@@ -139,6 +139,7 @@ module Documents
     # Search the document's content outline and leaf blocks for the selection.
     # Supports matching within a single block or across multiple consecutive blocks,
     # normalizing line breaks, whitespace, and markdown prefixes (bullets/numbers).
+    # The outline is the same text the agent sees via read_document.
     def locate_selected_text(selected_text)
       target = selected_text.to_s.strip
       return nil if target.blank?

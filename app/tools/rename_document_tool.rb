@@ -11,7 +11,7 @@ class RenameDocumentTool < MCP::Tool
     properties: {
       document_id: {
         type: "integer",
-        description: "Document id as returned by list_documents or open_document.",
+        description: "Document id as returned by list_documents or read_document.",
       },
       name: {
         type: "string",

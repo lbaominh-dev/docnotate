@@ -80,6 +80,16 @@ DOCNOTATE_MODE="${DOCNOTATE_MODE:-local}"
 
 ### 5. Open the plan in DocNotate
 
+If DocNotate's MCP tools are available in the current agent session, call the `open_in_browser` tool with the absolute file path:
+
+```json
+open_in_browser(file_path: "<absolute_path_to_plan_file>")
+```
+
+This registers or syncs the file, launches your desktop browser directly to the document, and returns the canonical URL.
+
+If DocNotate MCP tools are not available (e.g. older server or standalone session), fall back to opening the URL directly, depending on the mode:
+
 - **Local Mode** (`DOCNOTATE_MODE=local`):
   Open the file directly with its absolute path:
   ```bash

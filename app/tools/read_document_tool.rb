@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class OpenDocumentTool < MCP::Tool
-  tool_name "open_document"
-  title "Open Document"
-  description "Opens a markdown or html file by path (or syncs content directly). DocNotate reads it from disk or from database/content payload, upserts its record, and snapshots a new version if the file changed since last time — the same write path the app's UI uses. Returns the document's metadata and a block-level content outline; block ids double as comment anchors for comment tools."
+class ReadDocumentTool < MCP::Tool
+  tool_name "read_document"
+  title "Read Document"
+  description "Reads a markdown or html file by path (or syncs content directly). DocNotate reads it from disk or from database/content payload, upserts its record, and snapshots a new version if the file changed since last time — the same write path the app's UI uses. Returns document metadata and a structured block-level content outline. Block ids serve as anchors for comment tools."
 
   input_schema(
     properties: {
@@ -20,9 +20,9 @@ class OpenDocumentTool < MCP::Tool
   )
 
   annotations(
-    read_only_hint: true,
+    read_only_hint: false,
     destructive_hint: false,
-    idempotent_hint: true,
+    idempotent_hint: false,
     open_world_hint: false,
   )
 

@@ -2,7 +2,35 @@ module Documents
   module FileSyncable
     extend ActiveSupport::Concern
 
+    def browser_url
+      "#{self.class.browser_base_url}/documents/open?file_path=#{ERB::Util.url_encode(file_path)}"
+    end
+
     class_methods do
+      def browser_base_url
+        if ENV["DOCNOTATE_BASE_URL"].present?
+          ENV["DOCNOTATE_BASE_URL"].to_s.strip.sub(%r{/+\z}, "")
+        elsif ENV["DOCNOTATE_ROOT_URL"].present?
+          ENV["DOCNOTATE_ROOT_URL"].to_s.strip.sub(%r{/+\z}, "")
+        elsif (db_setting = (AppSetting.get("base_url") rescue nil)).present?
+          db_setting.to_s.strip.sub(%r{/+\z}, "")
+        else
+          "http://localhost:#{ENV.fetch('PORT', 3000)}"
+        end
+      end
+
+      def resolve_document(id: nil, file_path: nil)
+        if id.present? && file_path.present?
+          raise ArgumentError, "Provide either file_path or document_id, not both."
+        elsif id.present?
+          find_by(id: id) || raise(ActiveRecord::RecordNotFound, "Document with id #{id} not found.")
+        elsif file_path.present?
+          open(file_path)
+        else
+          raise ArgumentError, "Either file_path or document_id is required."
+        end
+      end
+
       def normalize_file_path(path)
         return path if path.blank?
 

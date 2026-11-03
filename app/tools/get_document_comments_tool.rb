@@ -3,7 +3,7 @@
 class GetDocumentCommentsTool < MCP::Tool
   tool_name "get_document_comments"
   title "Get Document Comments"
-  description "Returns a document's inline comments, including the selected text and block span each comment anchors to (block ids come from open_document's outline). " +
+  description "Returns a document's inline comments, including the selected text and block span each comment anchors to (block ids come from read_document's outline). " +
     "Only comments on the current version arrive inline; comments pinned to older versions come back under \"archived\" with the version they belong to. " +
     "Default status is \"unresolved\" — pass \"all\" to include already-resolved comments too."
 
@@ -11,7 +11,7 @@ class GetDocumentCommentsTool < MCP::Tool
     properties: {
       document_id: {
         type: "integer",
-        description: "Document id as returned by list_documents or open_document.",
+        description: "Document id as returned by list_documents or read_document.",
       },
       status: {
         type: "string",

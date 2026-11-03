@@ -18,7 +18,8 @@ DocnotateServer = MCP::Server.new(
   tools: [
     AppStatusTool,
     ListDocumentsTool,
-    OpenDocumentTool,
+    ReadDocumentTool,
+    OpenInBrowserTool,
     GetDocumentContentTool,
     GetDocumentCommentsTool,
     CreateCommentTool,
