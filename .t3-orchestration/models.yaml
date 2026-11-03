@@ -1,0 +1,101 @@
+version: 1
+# Verified against T3 Nightly orchestrator_capabilities
+
+# 1. Role-to-Model Mapping with Multi-Provider Fallbacks
+# Example: Use OpenAI (codex) as primary; if out of capacity/tokens, automatically
+# fallback to Gemini (antigravity) or OpenCode.
+role_mapping:
+  explorer:
+    primary: antigravity_gemini_flash_low    # Provider: antigravity (Gemini)
+    fallbacks: [opencode_beam_free]          # Provider: opencode_2
+    description: "Read-only fast codebase exploration and file mapping"
+
+  architect:
+    primary: antigravity_claude_sonnet       # Provider: antigravity (Claude)
+    fallbacks: [codex_gpt_sol, opencode_deepseek_v4_pro]
+    description: "High-level architecture and trade-off design"
+
+  implementer:
+    primary: codex_gpt_sol                   # Provider: codex (OpenAI GPT-6.1 Sol)
+    fallbacks: [antigravity_gemini_flash_high, opencode_deepseek_v4_flash] # Fallback: Gemini -> OpenCode
+    description: "Scoped feature implementation and unit test writing"
+
+  debugger:
+    primary: codex_gpt_sol                   # Provider: codex (OpenAI GPT-6.1 Sol)
+    fallbacks: [antigravity_gemini_flash_high, opencode_deepseek_v4_flash] # Fallback: Gemini -> OpenCode
+    description: "Defect reproduction and minimal bug fixing"
+
+  reviewer:
+    primary: antigravity_claude_sonnet       # Provider: antigravity (Claude)
+    fallbacks: [codex_gpt_sol, opencode_deepseek_v4_pro]
+    description: "Code correctness, security, and architectural review"
+
+  tester:
+    primary: opencode_beam_free              # Provider: opencode_2 (Beam Free)
+    fallbacks: [antigravity_gemini_flash_low]# Fallback: Gemini
+    description: "Test suite execution and evidence collection"
+
+# 2. Model Tier Classifications
+tiers:
+  economy: [antigravity_gemini_flash_low, opencode_beam_free]
+  balanced: [codex_gpt_sol, codex_gpt_terra, antigravity_gemini_flash_high, opencode_deepseek_v4_flash]
+  premium: [antigravity_claude_sonnet, antigravity_claude_opus, opencode_deepseek_v4_pro]
+
+# 3. Model & Provider Definitions
+models:
+  # --- OpenAI (via Codex Provider) ---
+  codex_gpt_sol:
+    provider_instance_id: "codex"
+    model: "gpt-6.1-sol"
+    tier: balanced
+    tasks: [implementation, debugging, architecture]
+
+  codex_gpt_terra:
+    provider_instance_id: "codex"
+    model: "gpt-6.1-terra"
+    tier: balanced
+    tasks: [implementation, debugging]
+
+  # --- Google Gemini & Claude (via Antigravity Provider) ---
+  antigravity_gemini_flash_low:
+    provider_instance_id: "antigravity"
+    model: "gemini-3.8-flash-low"
+    tier: economy
+    tasks: [exploration, test_analysis, simple_queries]
+
+  antigravity_gemini_flash_high:
+    provider_instance_id: "antigravity"
+    model: "gemini-3.8-flash-high"
+    tier: balanced
+    tasks: [implementation, debugging, routine_refactoring]
+
+  antigravity_claude_sonnet:
+    provider_instance_id: "antigravity"
+    model: "claude-sonnet-4-6"
+    tier: premium
+    tasks: [architecture, complex_review, security_analysis]
+
+  antigravity_claude_opus:
+    provider_instance_id: "antigravity"
+    model: "claude-opus-4-6-thinking"
+    tier: premium
+    tasks: [deep_architectural_design, critical_security]
+
+  # --- OpenCode Models (via opencode_2 Provider) ---
+  opencode_beam_free:
+    provider_instance_id: "opencode_2"
+    model: "opencode/beam-free"
+    tier: economy
+    tasks: [exploration, routine_read_only]
+
+  opencode_deepseek_v4_flash:
+    provider_instance_id: "opencode_2"
+    model: "opencode-go/deepseek-v4.1-flash"
+    tier: balanced
+    tasks: [implementation, debugging]
+
+  opencode_deepseek_v4_pro:
+    provider_instance_id: "opencode_2"
+    model: "opencode-go/deepseek-v4-pro"
+    tier: premium
+    tasks: [complex_reasoning, deep_debugging]

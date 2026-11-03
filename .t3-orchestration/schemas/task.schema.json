@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "T3NativeDelegatedTask",
+  "type": "object",
+  "required": [
+    "task_id",
+    "role",
+    "objective",
+    "scope",
+    "constraints",
+    "acceptance_criteria",
+    "model_tier"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique deterministic identifier for the task"
+    },
+    "role": {
+      "type": "string",
+      "enum": ["explorer", "architect", "implementer", "debugger", "reviewer", "tester"],
+      "description": "Specialized agent role assigned to execute this task"
+    },
+    "objective": {
+      "type": "string",
+      "description": "Clear and actionable objective"
+    },
+    "scope": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of directories or files in scope"
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Execution constraints (e.g. read-only, no nested delegation, single-writer)"
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Concrete criteria for considering the task completed"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "List of task_ids this task depends on"
+    },
+    "model_tier": {
+      "type": "string",
+      "enum": ["economy", "balanced", "premium"],
+      "description": "Target model capability tier"
+    },
+    "context": {
+      "type": "object",
+      "description": "Optional context findings handed down from Main or earlier tasks"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,19 @@
+version: 1
+orchestration:
+  backend: t3-native
+  user_facing_agent: main
+  max_delegation_depth: 1
+  desired_max_active_children: 3
+  desired_max_tasks_per_request: 8
+  default_child_timeout_seconds: 600
+  max_retry_attempts: 2
+  max_review_fix_cycles: 2
+  parallelize_independent_read_only_tasks: true
+  single_writer_per_worktree: true
+  require_tests_for_code_changes: true
+  require_review_for_high_risk_changes: true
+  final_response_owner: main
+  cost:
+    soft_budget_usd_per_request: 2.00
+    alert_at_fraction: 0.8
+    hard_limit_enabled: false # Enforced prompt-side only until native server-side enforcement

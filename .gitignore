@@ -48,3 +48,5 @@ db/*.sqlite3
 # Keep the docs directory empty on the remote; files are added selectively.
 /docs/*
 !/docs/.gitkeep
+!/docs/orchestration/
+!/docs/orchestration/**

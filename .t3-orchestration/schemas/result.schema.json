@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "T3NativeDelegatedResult",
+  "type": "object",
+  "required": [
+    "task_id",
+    "status",
+    "summary",
+    "changed_files",
+    "evidence",
+    "risks"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Identifier matching the dispatched task"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["completed", "failed", "blocked"],
+      "description": "Execution status reported by the child"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Concise summary of findings or actions performed"
+    },
+    "changed_files": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of paths modified by this task (empty for read-only roles)"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "note"],
+        "properties": {
+          "path": { "type": "string" },
+          "line_range": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      },
+      "description": "Concrete file, code reference, or test evidence"
+    },
+    "tests": {
+      "type": "object",
+      "properties": {
+        "run": { "type": "array", "items": { "type": "string" } },
+        "passed": { "type": "array", "items": { "type": "string" } },
+        "failed": { "type": "array", "items": { "type": "string" } }
+      },
+      "description": "Test execution records if applicable"
+    },
+    "risks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Identified risks, caveats, or blockers"
+    },
+    "handoff_notes": {
+      "type": "string",
+      "description": "Direct guidance for the Main Agent or subsequent tasks"
+    }
+  },
+  "additionalProperties": false
+}

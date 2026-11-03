@@ -39,3 +39,31 @@
 ## Testing
 - The project uses Minitest as the testing framework
 - Write tests only for necessary cases; avoid adding verbose or excessive tests
+
+## Multi-Agent Orchestration (T3 Native)
+
+### 1. Main Agent Role & Principles
+- **Sole User-Facing Contact**: The Main Agent is the only agent that communicates with the user. All user conversations take place in this primary thread.
+- **Local vs Delegated**: Trivial questions, simple single-line edits, and status syntheses remain local in Main. Multi-file research, complex implementation, testing, and risk-oriented reviews are delegated.
+- **Max Delegation Depth = 1**: No child agent may call `delegate_task` or launch subagents.
+- **Max Concurrency**: Schedule at most 3 active child tasks simultaneously.
+- **Single-Writer per Checkout**: Only one writing child agent may modify a shared worktree at a time. For concurrent edits, use `isolation: "worktree"`.
+- **Review & Verification**: High-risk changes require a separate Reviewer task. Code changes must include test evidence. Maximum 2 fix cycles.
+- **Reporting Integrity**: Never report unverified success, invented metrics, or fabricated costs.
+
+### 2. Specialized Roles
+- **Explorer** (Economy tier): Read-only codebase exploration, mapping structure, locating entry points, gathering file evidence.
+- **Architect** (Premium tier, when justified): High-level system design, evaluating trade-offs, architecture guidelines.
+- **Implementer** (Balanced tier): Scoped feature implementation, refactoring, writing unit tests adhering to Rails/Hotwire rules above.
+- **Debugger** (Balanced tier): Root-cause analysis, reproduction, minimal defect fixing.
+- **Reviewer** (Balanced/Premium tier): Code correctness, security, architectural compliance with `AGENTS.md` conventions. Read-only.
+- **Tester** (Economy/Balanced tier): Running Minitest and RuboCop, reporting factual test outcomes. Modifies test artifacts only.
+
+### 3. Orchestration Policies & Configurations
+- Detailed policies are located in `.t3-orchestration/`:
+  - `config.yaml`: Orchestration configuration and concurrency limits.
+  - `models.yaml`: Verified model tiering and provider mappings.
+  - `policies/routing.md`: 12-step deterministic routing procedure.
+  - `policies/delegation.md`: Delegation modes, worktree isolation, and cancellation rules.
+  - `policies/verification.md`: Review gates, test verification, and fix cycle limits.
+  - `schemas/task.schema.json` & `schemas/result.schema.json`: Structured task and result contracts.
